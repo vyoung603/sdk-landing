@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SonderMind AI Coach SDK — Stress Coaching That Actually Works, Built Into Your App</title>
+<meta name="description" content="Add a clinically-guardrailed AI mental health coach to your app in days. Trained on millions of real therapy sessions. HIPAA compliant. SOC 2 certified.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a0f;
+  color: #e4e4e7;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
+
+/* ========== TOKENS ========== */
+:root {
+  --accent: #7c5cfc;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(124, 92, 252, 0.15);
+  --teal: #2dd4bf;
+  --teal-dim: rgba(45, 212, 191, 0.12);
+  --surface: #111118;
+  --surface-2: #18181f;
+  --surface-3: #1e1e28;
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --max-w: 1200px;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ========== UTILITIES ========== */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--surface-3); border: 1px solid var(--border); color: var(--text-secondary);
+}
+.badge--accent { background: var(--accent-glow); border-color: rgba(124,92,252,0.3); color: var(--accent-light); }
+.badge--teal { background: var(--teal-dim); border-color: rgba(45,212,191,0.25); color: var(--teal); }
+.section-label {
+  font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent-light); margin-bottom: 16px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.15;
+  color: var(--text-primary); margin-bottom: 20px;
+}
+.section-desc {
+  font-size: 17px; color: var(--text-secondary); max-width: 640px; line-height: 1.7;
+}
+.fade-in {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ========== NAV ========== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 15px; color: var(--text-primary);
+}
+.nav-logo svg { width: 28px; height: 28px; }
+.nav-logo span.dim { color: var(--text-tertiary); font-weight: 400; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Mobile nav */
+.nav-toggle { display: none; background: none; border: none; color: var(--text-primary); cursor: pointer; }
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .nav-links.open {
+    display: flex; flex-direction: column; gap: 0;
+    position: absolute; top: 64px; left: 0; right: 0;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .nav-links.open a, .nav-links.open .nav-cta {
+    padding: 16px 24px; border-bottom: 1px solid var(--border); width: 100%; text-align: left; border-radius: 0;
+  }
+}
+
+/* ========== HERO ========== */
+.hero {
+  padding: 160px 0 100px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero .container { position: relative; z-index: 1; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.hero-content { max-width: 560px; }
+.hero h1 {
+  font-size: clamp(36px, 5vw, 54px); font-weight: 700; line-height: 1.1;
+  color: var(--text-primary); margin-bottom: 24px;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent-light), var(--teal));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 18px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px;
+}
+.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,92,252,0.3); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  background: transparent; color: var(--text-primary); border: 1px solid var(--border-light);
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--text-tertiary); background: var(--surface-2); }
+
+/* Code window */
+.hero-code {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+}
+.code-bar {
+  display: flex; align-items: center; gap: 8px; padding: 14px 18px;
+  border-bottom: 1px solid var(--border); background: var(--surface-2);
+}
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.code-dot--r { background: #ef4444; }
+.code-dot--y { background: #eab308; }
+.code-dot--g { background: #22c55e; }
+.code-bar span {
+  margin-left: 8px; font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono);
+}
+.code-body {
+  padding: 20px; font-family: var(--font-mono); font-size: 13px; line-height: 1.8;
+  overflow-x: auto;
+}
+.code-body .kw { color: #c084fc; }
+.code-body .fn { color: #60a5fa; }
+.code-body .str { color: #4ade80; }
+.code-body .cm { color: #52525b; font-style: italic; }
+.code-body .op { color: #a78bfa; }
+.code-body .num { color: #f59e0b; }
+.code-body .tag { color: #f472b6; }
+.code-body .attr { color: #38bdf8; }
+.code-body .val { color: #4ade80; }
+.code-body .br { color: #71717a; }
+.code-body .typ { color: #2dd4bf; }
+.code-line {
+  opacity: 0; transform: translateX(-8px);
+  animation: typeIn 0.4s ease forwards;
+}
+@keyframes typeIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  .hero-content { max-width: 100%; }
+}
+
+/* ========== PROBLEM ========== */
+.problem { padding: 100px 0; border-top: 1px solid var(--border); }
+.problem-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;
+  margin-top: 48px;
+}
+.problem-card {
+  padding: 32px; border-radius: var(--radius); background: var(--surface);
+  border: 1px solid var(--border); transition: border-color 0.3s;
+}
+.problem-card:hover { border-color: var(--border-light); }
+.problem-card .icon {
+  width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 20px; margin-bottom: 20px;
+}
+.problem-card h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.problem-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+/* ========== SOLUTION ========== */
+.solution { padding: 100px 0; border-top: 1px solid var(--border); }
+.solution-highlight {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 48px;
+}
+.solution-visual {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 40px; position: relative; overflow: hidden;
+}
+.solution-visual::after {
+  content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.flow-step {
+  display: flex; align-items: center; gap: 16px; padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.flow-step:last-child { border-bottom: none; }
+.flow-num {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; font-family: var(--font-mono); flex-shrink: 0;
+  background: var(--accent-glow); color: var(--accent-light); border: 1px solid rgba(124,92,252,0.2);
+}
+.flow-step-text h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.flow-step-text p { font-size: 13px; color: var(--text-tertiary); }
+@media (max-width: 960px) { .solution-highlight { grid-template-columns: 1fr; } }
+
+/* ========== DEPLOYMENT OPTIONS ========== */
+.deploy { padding: 100px 0; border-top: 1px solid var(--border); }
+.deploy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+.deploy-card {
+  padding: 40px; border-radius: var(--radius-lg); background: var(--surface);
+  border: 1px solid var(--border); position: relative; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.deploy-card:hover { border-color: var(--accent); }
+.deploy-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.deploy-card:first-child::before {
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.deploy-card:last-child::before {
+  background: linear-gradient(90deg, var(--teal), transparent);
+}
+.deploy-card .badge { margin-bottom: 20px; }
+.deploy-card h3 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+.deploy-card > p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+.deploy-card ul { list-style: none; }
+.deploy-card ul li {
+  padding: 8px 0; font-size: 14px; color: var(--text-secondary);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.deploy-card ul li::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-light); flex-shrink: 0; margin-top: 8px;
+}
+.deploy-card:last-child ul li::before { background: var(--teal); }
+@media (max-width: 768px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+/* ========== WHY US ========== */
+.why { padding: 100px 0; border-top: 1px solid var(--border); }
+.why-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px;
+}
+.why-card {
+  padding: 32px; border-radius: var(--radius); background: var(--surface);
+  border: 1px solid var(--border);
+}
+.why-card .metric {
+  font-size: 36px; font-weight: 700; font-family: var(--font-mono);
+  margin-bottom: 8px;
+}
+.why-card:nth-child(1) .metric { color: var(--accent-light); }
+.why-card:nth-child(2) .metric { color: var(--teal); }
+.why-card:nth-child(3) .metric { color: #f59e0b; }
+.why-card h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.why-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+@media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
+
+/* ========== INTEGRATION STEPS ========== */
+.integrate { padding: 100px 0; border-top: 1px solid var(--border); }
+.steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 48px;
+  background: var(--border); border-radius: var(--radius-lg); overflow: hidden;
+}
+.step {
+  background: var(--surface); padding: 36px 28px; position: relative;
+}
+.step-num {
+  font-family: var(--font-mono); font-size: 48px; font-weight: 700;
+  color: var(--surface-3); position: absolute; top: 16px; right: 20px;
+  line-height: 1;
+}
+.step h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.step p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+@media (max-width: 768px) {
+  .steps { grid-template-columns: 1fr; }
+}
+
+/* ========== CODE EXAMPLES ========== */
+.examples { padding: 100px 0; border-top: 1px solid var(--border); }
+.examples-tabs {
+  display: flex; gap: 4px; margin-top: 48px; margin-bottom: 0;
+  border-bottom: 1px solid var(--border); padding-bottom: 0;
+}
+.tab-btn {
+  padding: 12px 20px; font-size: 13px; font-weight: 600; font-family: var(--font-mono);
+  background: transparent; color: var(--text-tertiary); border: none; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all 0.2s; margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--accent-light); border-bottom-color: var(--accent); background: var(--surface); }
+.tab-btn:hover:not(.active) { color: var(--text-secondary); }
+.tab-panel {
+  display: none; background: var(--surface); border: 1px solid var(--border);
+  border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+  overflow: hidden;
+}
+.tab-panel.active { display: block; }
+.tab-panel .code-body { padding: 24px; font-size: 13.5px; line-height: 1.9; }
+
+/* ========== CTA ========== */
+.cta-section {
+  padding: 100px 0; border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(124,92,252,0.04) 100%);
+  text-align: center;
+}
+.cta-section .section-title { max-width: 600px; margin: 0 auto 16px; }
+.cta-section .section-desc { margin: 0 auto 40px; text-align: center; }
+.cta-form {
+  display: flex; gap: 12px; max-width: 480px; margin: 0 auto;
+}
+.cta-form input {
+  flex: 1; padding: 14px 18px; border-radius: 10px; font-size: 15px;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-primary);
+  outline: none; transition: border-color 0.2s; font-family: 'Inter', sans-serif;
+}
+.cta-form input::placeholder { color: var(--text-tertiary); }
+.cta-form input:focus { border-color: var(--accent); }
+.cta-form button { white-space: nowrap; }
+.cta-note {
+  margin-top: 16px; font-size: 13px; color: var(--text-tertiary);
+}
+
+/* ========== FOOTER ========== */
+footer {
+  padding: 48px 0; border-top: 1px solid var(--border);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+}
+.footer-brand p { font-size: 13px; color: var(--text-tertiary); margin-top: 12px; line-height: 1.6; max-width: 280px; }
+.footer-col h4 {
+  font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-tertiary); margin-bottom: 16px;
+}
+.footer-col a {
+  display: block; padding: 4px 0; font-size: 14px; color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text-primary); }
+.footer-bottom {
+  margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--text-tertiary);
+}
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="#7c5cfc"/>
+        <path d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="16" cy="16" r="2" fill="#fff"/>
+      </svg>
+      SonderMind <span class="dim">/ AI Coach SDK</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#problem">Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#examples">Code</a>
+      <a href="#cta" class="nav-cta">Request Early Access</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content fade-in">
+        <div class="hero-badges">
+          <span class="badge badge--accent">Now in Early Access</span>
+        </div>
+        <h1>Add AI mental health coaching to your app <span class="gradient">in days, not months</span></h1>
+        <p>A single SDK integration gives your users an AI coach trained on millions of real therapy sessions. Clinically guardrailed. Validated stress and resilience assessments built in. HIPAA compliant out of the box.</p>
+        <div class="hero-badges" style="margin-bottom:24px">
+          <span class="badge badge--teal">HIPAA Compliant</span>
+          <span class="badge badge--teal">SOC 2 Certified</span>
+          <span class="badge">BAA Available</span>
+          <span class="badge">Clinically Guardrailed</span>
+        </div>
+        <div class="hero-actions">
+          <a href="#cta" class="btn-primary">Request Early Access <span>&rarr;</span></a>
+          <a href="#examples" class="btn-secondary">View Code Examples</a>
+        </div>
+      </div>
+      <div class="hero-code fade-in" style="transition-delay: 0.15s">
+        <div class="code-bar">
+          <span class="code-dot code-dot--r"></span>
+          <span class="code-dot code-dot--y"></span>
+          <span class="code-dot code-dot--g"></span>
+          <span>app.tsx</span>
+        </div>
+        <div class="code-body" id="heroCode"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROBLEM ========== -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">The Problem</p>
+      <h2 class="section-title">Your users carry stress. Your app can't help.</h2>
+      <p class="section-desc">Not everyone needs therapy, but everyone carries stress. Building a clinically-informed AI coach yourself means navigating compliance, clinical validation, and months of specialized development.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card fade-in">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3>No Clinical Guardrails</h3>
+        <p>Generic wellness chatbots are not clinical care. Without validated assessments and safety protocols, you risk giving users bad advice when it matters most.</p>
+      </div>
+      <div class="problem-card fade-in" style="transition-delay:0.1s">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3>Months to Build</h3>
+        <p>A clinically-informed AI coach requires HIPAA infrastructure, training data from real clinical sessions, validated assessments, and safety protocols. That's 6-12 months of specialized work.</p>
+      </div>
+      <div class="problem-card fade-in" style="transition-delay:0.2s">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h3>Compliance Burden</h3>
+        <p>HIPAA, SOC 2, BAAs, state licensing requirements, crisis protocols. The regulatory overhead alone can stall a product roadmap for quarters.</p>
+      </div>
+      <div class="problem-card fade-in" style="transition-delay:0.3s">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h3>No Clinical Foundation</h3>
+        <p>Generic AI chatbots aren't trained on real clinical data. Without validated protocols and safety guardrails, you're guessing at what works.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SOLUTION ========== -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">The Solution</p>
+      <h2 class="section-title">One integration. Clinical-grade AI coaching.</h2>
+      <p class="section-desc">The SonderMind AI Coach SDK gives your app a clinically-guardrailed AI coach trained on millions of real therapy sessions. It measures stress, builds resilience, and adapts to your users' needs with neuroscience-validated assessments built in.</p>
+    </div>
+    <div class="solution-highlight">
+      <div class="fade-in">
+        <div style="margin-top:40px">
+          <h3 style="font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:16px">What your users get</h3>
+          <ul style="list-style:none">
+            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+              <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
+              <span><strong style="color:var(--text-primary)">AI coaching trained on real therapy sessions</strong> with therapist-in-the-loop oversight</span>
+            </li>
+            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+              <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
+              <span><strong style="color:var(--text-primary)">12-dimension stress and resilience assessment</strong> via Total Brain neuroscience platform</span>
+            </li>
+            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+              <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
+              <span><strong style="color:var(--text-primary)">Clinical safety guardrails</strong> built in, with escalation protocols for high-risk situations</span>
+            </li>
+            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+              <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
+              <span><strong style="color:var(--text-primary)">Measurable outcomes</strong> with assess-train-reassess model and population-level insights</span>
+            </li>
+            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+              <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
+              <span><strong style="color:var(--text-primary)">Context-aware sessions</strong> that adapt to your app's domain and user signals</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="solution-visual fade-in" style="transition-delay:0.15s">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-step-text">
+            <h4>SDK Integrated</h4>
+            <p>Your app triggers a coaching session</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-step-text">
+            <h4>Baseline Assessment</h4>
+            <p>12-dimension stress and resilience score via Total Brain</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-step-text">
+            <h4>AI Coach Engages</h4>
+            <p>Clinically-guardrailed coaching adapts to your user's context</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-step-text">
+            <h4>Train and Reassess</h4>
+            <p>Measurable improvement over time with ongoing assessment</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-step-text">
+            <h4>Safety Guardrails</h4>
+            <p>Built-in escalation protocols if clinical need is detected</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DEPLOYMENT OPTIONS ========== -->
+<section class="deploy" id="deploy">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">Deployment Options</p>
+      <h2 class="section-title">Two ways to integrate. Pick what fits.</h2>
+      <p class="section-desc">Whether your app already has an AI assistant or you're starting fresh, there's a clean path to integration.</p>
+    </div>
+    <div class="deploy-grid">
+      <div class="deploy-card fade-in">
+        <span class="badge badge--accent">For apps with AI</span>
+        <h3>Tool / Function Calling</h3>
+        <p>Your AI assistant calls our coaching API as a tool. The SonderMind coach runs as a function within your existing conversational flow.</p>
+        <ul>
+          <li>Works with OpenAI, Anthropic, or custom LLM stacks</li>
+          <li>Coach runs as a tool call within your agent</li>
+          <li>Full context passing between your AI and ours</li>
+          <li>REST API + WebSocket for real-time sessions</li>
+          <li>Assessment scores and coaching insights as structured data</li>
+        </ul>
+      </div>
+      <div class="deploy-card fade-in" style="transition-delay:0.1s">
+        <span class="badge badge--teal">For apps without AI</span>
+        <h3>Embeddable SDK</h3>
+        <p>Drop in a pre-built coaching interface with a few lines of code. Full UI included, fully themeable to match your brand.</p>
+        <ul>
+          <li>React Native and Web components</li>
+          <li>Themeable UI that matches your brand</li>
+          <li>Handles all coaching UX out of the box</li>
+          <li>Event callbacks for assessment scores and session state</li>
+          <li>Works on iOS, Android, and web</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== WHY US ========== -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">Why SonderMind</p>
+      <h2 class="section-title">Clinical infrastructure you can't build alone</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card fade-in">
+        <div class="metric">25%</div>
+        <h3>Stress Reduction</h3>
+        <p>Measured across assess-train-reassess cognitive programs. Real outcomes data, not self-reported surveys.</p>
+      </div>
+      <div class="why-card fade-in" style="transition-delay:0.1s">
+        <div class="metric">Days</div>
+        <h3>To Integration</h3>
+        <p>Working prototype in under two hours. Production deployment in days. No compliance buildout, no clinical hiring, no regulatory review.</p>
+      </div>
+      <div class="why-card fade-in" style="transition-delay:0.2s">
+        <div class="metric">12</div>
+        <h3>Brain Health Dimensions</h3>
+        <p>Total Brain neuroscience assessments measure stress, resilience, focus, planning, and more. Population-level insights your users and your team can act on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INTEGRATION STEPS ========== -->
+<section class="integrate" id="integrate">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">Getting Started</p>
+      <h2 class="section-title">From zero to live in four steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <span class="step-num">01</span>
+        <h3>Apply</h3>
+        <p>Submit your use case. We review for clinical fit and regulatory alignment.</p>
+      </div>
+      <div class="step fade-in" style="transition-delay:0.1s">
+        <span class="step-num">02</span>
+        <h3>Sandbox</h3>
+        <p>Get API keys and access to a full sandbox environment with test users and mock escalations.</p>
+      </div>
+      <div class="step fade-in" style="transition-delay:0.15s">
+        <span class="step-num">03</span>
+        <h3>Integrate</h3>
+        <p>Build with our SDK or API. Ship a working prototype in hours with our quickstart guides.</p>
+      </div>
+      <div class="step fade-in" style="transition-delay:0.2s">
+        <span class="step-num">04</span>
+        <h3>Launch</h3>
+        <p>Go live with clinical coaching, escalation pathways, and full compliance coverage from day one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CODE EXAMPLES ========== -->
+<section class="examples" id="examples">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">Code Examples</p>
+      <h2 class="section-title">Built for developers who ship</h2>
+      <p class="section-desc">Real code. Real patterns. Pick the integration style that matches your architecture.</p>
+    </div>
+    <div class="fade-in" style="transition-delay:0.1s">
+      <div class="examples-tabs">
+        <button class="tab-btn active" data-tab="tab-tool">Tool Calling</button>
+        <button class="tab-btn" data-tab="tab-react">React Native</button>
+        <button class="tab-btn" data-tab="tab-rest">REST API</button>
+        <button class="tab-btn" data-tab="tab-ws">WebSocket</button>
+      </div>
+
+      <!-- Tool Calling -->
+      <div class="tab-panel active" id="tab-tool">
+        <div class="code-body"><span class="cm">// Define the coaching tool for your AI agent</span>
+<span class="kw">const</span> coachingTool = {
+  <span class="attr">name</span>: <span class="str">"sondermind_coach"</span>,
+  <span class="attr">description</span>: <span class="str">"Start a clinical coaching session for stress and resilience"</span>,
+  <span class="attr">parameters</span>: {
+    <span class="attr">type</span>: <span class="str">"object"</span>,
+    <span class="attr">properties</span>: {
+      <span class="attr">user_id</span>:  { <span class="attr">type</span>: <span class="str">"string"</span> },
+      <span class="attr">context</span>:  { <span class="attr">type</span>: <span class="str">"object"</span>, <span class="attr">description</span>: <span class="str">"App-specific context"</span> },
+      <span class="attr">protocol</span>: { <span class="attr">type</span>: <span class="str">"string"</span>, <span class="attr">enum</span>: [<span class="str">"stress_resilience"</span>, <span class="str">"general_wellness"</span>] }
+    }
+  }
+};
+
+<span class="cm">// Your agent calls the coach when stress is detected</span>
+<span class="kw">const</span> response = <span class="kw">await</span> sondermind.coach.<span class="fn">createSession</span>({
+  <span class="attr">userId</span>: <span class="str">"user_9f28a3c"</span>,
+  <span class="attr">context</span>: {
+    <span class="attr">app</span>: <span class="str">"fertility_tracker"</span>,
+    <span class="attr">trigger</span>: <span class="str">"high_stress_detected"</span>,
+    <span class="attr">recentMood</span>: <span class="str">"anxious"</span>
+  },
+  <span class="attr">protocol</span>: <span class="str">"stress_resilience"</span>
+});
+
+<span class="cm">// response.session_id    → "ses_k8x2m..."</span>
+<span class="cm">// response.status        → "active"</span>
+<span class="cm">// response.stress_score  → 72</span>
+<span class="cm">// response.resilience    → { score: 58, delta: "+4" }</span></div>
+      </div>
+
+      <!-- React Native -->
+      <div class="tab-panel" id="tab-react">
+        <div class="code-body"><span class="kw">import</span> { <span class="typ">CoachingView</span>, <span class="typ">useCoachSession</span> } <span class="kw">from</span> <span class="str">'@sondermind/ai-coach-sdk'</span>;
+
+<span class="kw">export default function</span> <span class="fn">WellnessScreen</span>() {
+  <span class="kw">const</span> { session, escalation } = <span class="fn">useCoachSession</span>({
+    <span class="attr">userId</span>: currentUser.<span class="attr">id</span>,
+    <span class="attr">protocol</span>: <span class="str">"stress_resilience"</span>,
+  });
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;CoachingView</span>
+      <span class="attr">apiKey</span>=<span class="br">{</span>process.env.<span class="val">SONDERMIND_API_KEY</span><span class="br">}</span>
+      <span class="attr">userId</span>=<span class="br">{</span>currentUser.<span class="val">id</span><span class="br">}</span>
+      <span class="attr">theme</span>=<span class="str">"dark"</span>
+      <span class="attr">brandColor</span>=<span class="str">"#7c5cfc"</span>
+      <span class="attr">onAssessment</span>=<span class="br">{</span>(<span class="val">scores</span>) <span class="op">=&gt;</span> {
+        <span class="cm">// scores.stress: 72, scores.resilience: 58, scores.focus: 81</span>
+        <span class="cm">// scores.dimensions: 12 Total Brain cognitive dimensions</span>
+        <span class="fn">updateUserProfile</span>(scores);
+      <span class="br">}</span>}
+      <span class="attr">onSessionEnd</span>=<span class="br">{</span>(<span class="val">summary</span>) <span class="op">=&gt;</span> {
+        <span class="cm">// summary.stressScore, summary.resilienceDelta, summary.insights</span>
+        <span class="fn">trackOutcome</span>(summary);
+      <span class="br">}</span>}
+    <span class="tag">/&gt;</span>
+  );
+}</div>
+      </div>
+
+      <!-- REST API -->
+      <div class="tab-panel" id="tab-rest">
+        <div class="code-body"><span class="cm"># Create a coaching session</span>
+<span class="fn">curl</span> <span class="str">-X POST https://api.sondermind.com/v1/coach/sessions</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer sk_live_..."</span> \
+  <span class="op">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="op">-d</span> <span class="str">'{
+    "user_id": "user_9f28a3c",
+    "protocol": "stress_resilience",
+    "context": {
+      "app_domain": "addiction_recovery",
+      "trigger": "check_in",
+      "user_streak": 45
+    }
+  }'</span>
+
+<span class="cm"># Response</span>
+{
+  <span class="attr">"session_id"</span>: <span class="str">"ses_k8x2mP7nQ"</span>,
+  <span class="attr">"status"</span>: <span class="str">"active"</span>,
+  <span class="attr">"ws_url"</span>: <span class="str">"wss://api.sondermind.com/v1/coach/sessions/ses_k8x2mP7nQ/stream"</span>,
+  <span class="attr">"expires_at"</span>: <span class="str">"2026-03-30T15:30:00Z"</span>
+}
+
+<span class="cm"># Send a message</span>
+<span class="fn">curl</span> <span class="str">-X POST https://api.sondermind.com/v1/coach/sessions/ses_k8x2mP7nQ/messages</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer sk_live_..."</span> \
+  <span class="op">-d</span> <span class="str">'{ "content": "I have been feeling overwhelmed with the IVF process" }'</span>
+
+<span class="cm"># Get session summary with stress assessment</span>
+<span class="fn">curl</span> <span class="str">https://api.sondermind.com/v1/coach/sessions/ses_k8x2mP7nQ/summary</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer sk_live_..."</span></div>
+      </div>
+
+      <!-- WebSocket -->
+      <div class="tab-panel" id="tab-ws">
+        <div class="code-body"><span class="kw">import</span> { <span class="typ">CoachClient</span> } <span class="kw">from</span> <span class="str">'@sondermind/ai-coach-sdk'</span>;
+
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="typ">CoachClient</span>({
+  <span class="attr">apiKey</span>: process.env.<span class="val">SONDERMIND_API_KEY</span>,
+  <span class="attr">protocol</span>: <span class="str">"stress_resilience"</span>,
+});
+
+<span class="cm">// Open a real-time coaching session</span>
+<span class="kw">const</span> session = <span class="kw">await</span> client.<span class="fn">connect</span>({
+  <span class="attr">userId</span>: <span class="str">"user_9f28a3c"</span>,
+  <span class="attr">context</span>: { <span class="attr">app</span>: <span class="str">"meditation_app"</span>, <span class="attr">trigger</span>: <span class="str">"post_session_checkin"</span> }
+});
+
+<span class="cm">// Stream coach responses in real time</span>
+session.<span class="fn">on</span>(<span class="str">"message"</span>, (<span class="val">msg</span>) <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(msg.<span class="attr">content</span>);       <span class="cm">// Coach response text</span>
+  console.<span class="fn">log</span>(msg.<span class="attr">assessment</span>);    <span class="cm">// Inline stress/resilience scores</span>
+});
+
+<span class="cm">// Handle assessment updates</span>
+session.<span class="fn">on</span>(<span class="str">"assessment"</span>, (<span class="val">scores</span>) <span class="op">=&gt;</span> {
+  <span class="cm">// scores.stress      → 72</span>
+  <span class="cm">// scores.resilience  → 58</span>
+  <span class="cm">// scores.dimensions  → { focus: 81, planning: 74, ... }</span>
+  <span class="fn">updateDashboard</span>(scores);
+});
+
+<span class="cm">// Send user messages</span>
+session.<span class="fn">send</span>(<span class="str">"I have been struggling to sleep since the diagnosis"</span>);
+
+<span class="cm">// End session and get summary</span>
+<span class="kw">const</span> summary = <span class="kw">await</span> session.<span class="fn">end</span>();
+<span class="cm">// summary.stressScore → 62</span>
+<span class="cm">// summary.resilienceDelta → +4</span>
+<span class="cm">// summary.recommendedFollowUp → "3_day"</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <div class="fade-in">
+      <p class="section-label">Early Access</p>
+      <h2 class="section-title">Ship an AI coach, not compliance paperwork</h2>
+      <p class="section-desc">We're onboarding a small number of design partners for the first SDK cohort. Drop your email and we'll reach out within 24 hours.</p>
+      <form class="cta-form" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="you@company.com" required aria-label="Email address">
+        <button type="submit" class="btn-primary">Request Early Access</button>
+      </form>
+      <p class="cta-note">No commitment. We'll schedule a 30-minute walkthrough to see if it's a fit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" style="margin-bottom:4px">
+          <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+            <rect width="32" height="32" rx="8" fill="#7c5cfc"/>
+            <path d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="16" cy="16" r="2" fill="#fff"/>
+          </svg>
+          SonderMind <span class="dim">/ AI Coach SDK</span>
+        </a>
+        <p>AI mental health coaching for digital health apps. Trained on real therapy sessions. Built by SonderMind.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#solution">Overview</a>
+        <a href="#deploy">Deployment</a>
+        <a href="#examples">Code Examples</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <a href="#">Documentation</a>
+        <a href="#">API Reference</a>
+        <a href="#">SDKs</a>
+        <a href="#">Status</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="https://sondermind.com" target="_blank">SonderMind.com</a>
+        <a href="#">Security</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 SonderMind Inc. All rights reserved.</span>
+      <span>HIPAA Compliant &middot; SOC 2 Type II &middot; BAA Available</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ========== MOBILE NAV ==========
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// Close nav on link click
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+
+// ========== SCROLL ANIMATIONS ==========
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ========== HERO CODE ANIMATION ==========
+const heroLines = [
+  '<span class="kw">import</span> { <span class="typ">CoachingView</span> } <span class="kw">from</span> <span class="str">\'@sondermind/ai-coach-sdk\'</span>;',
+  '',
+  '<span class="kw">export default function</span> <span class="fn">App</span>() {',
+  '  <span class="kw">return</span> (',
+  '    <span class="tag">&lt;CoachingView</span>',
+  '      <span class="attr">apiKey</span>=<span class="br">{</span>process.env.<span class="val">SONDERMIND_API_KEY</span><span class="br">}</span>',
+  '      <span class="attr">userId</span>=<span class="br">{</span>currentUser.<span class="val">id</span><span class="br">}</span>',
+  '      <span class="attr">protocol</span>=<span class="str">"stress_resilience"</span>',
+  '      <span class="attr">onAssessment</span>=<span class="br">{</span><span class="fn">handleStressScore</span><span class="br">}</span>',
+  '    <span class="tag">/&gt;</span>',
+  '  );',
+  '}'
+];
+
+const heroCodeEl = document.getElementById('heroCode');
+heroLines.forEach((line, i) => {
+  const div = document.createElement('div');
+  div.className = 'code-line';
+  div.style.animationDelay = (0.6 + i * 0.08) + 's';
+  div.innerHTML = line || '&nbsp;';
+  heroCodeEl.appendChild(div);
+});
+
+// ========== TABS ==========
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ========== CTA FORM ==========
+const APPS_SCRIPT_URL = 'APPS_SCRIPT_URL_HERE';
+const CALENDLY_URL = 'https://calendar.app.google/E7Hr6VA3izdpqfDb8';
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('input');
+  const btn = e.target.querySelector('button');
+  const email = input.value;
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  // Submit to Google Sheet via Apps Script
+  if (APPS_SCRIPT_URL !== 'APPS_SCRIPT_URL_HERE') {
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, source: 'landing-page' })
+    }).catch(() => {});
+  }
+
+  // Show confirmation modal
+  showConfirmation(email);
+}
+
+function showConfirmation(email) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px;max-width:480px;width:100%;text-align:center;position:relative;';
+  modal.innerHTML = `
+    <div style="width:56px;height:56px;border-radius:50%;background:rgba(45,212,191,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h3 style="font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:12px;">You're on the list</h3>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;">We'll reach out to <strong style="color:var(--text-primary)">${email}</strong> within 24 hours. Want to skip the wait and book a 30-minute walkthrough now?</p>
+    <a href="${CALENDLY_URL !== 'https://calendar.app.google/E7Hr6VA3izdpqfDb8' ? CALENDLY_URL : '#'}" target="_blank" class="btn-primary" style="display:inline-flex;text-decoration:none;margin-bottom:12px;">Book a 30-min Walkthrough <span>&rarr;</span></a>
+    <p style="margin-top:16px;"><button onclick="this.closest('div[style]').parentElement.remove()" style="background:none;border:none;color:var(--text-tertiary);font-size:14px;cursor:pointer;">I'll wait for the email</button></p>
+  `;
+  overlay.appendChild(modal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+</script>
+</body>
+</html>
