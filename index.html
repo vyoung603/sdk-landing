@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SonderMind AI Coach SDK — Stress Coaching That Actually Works, Built Into Your App</title>
-<meta name="description" content="Add a clinically-guardrailed AI mental health coach to your app in days. Trained on millions of real therapy sessions. HIPAA compliant. SOC 2 certified.">
+<title>SonderMind AI Coach SDK — Mental Health Support Your Users Actually Use</title>
+<meta name="description" content="Give your users real mental health coaching — trained on millions of therapy sessions, clinically guardrailed, and integrated in days. HIPAA compliant. SOC 2 certified.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ========== RESET & BASE ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0a0a0f;
-  color: #e4e4e7;
+  background: #F5F0E8;
+  color: #3a3a3a;
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -24,23 +24,29 @@ img { max-width: 100%; }
 
 /* ========== TOKENS ========== */
 :root {
-  --accent: #7c5cfc;
-  --accent-light: #a78bfa;
-  --accent-glow: rgba(124, 92, 252, 0.15);
-  --teal: #2dd4bf;
-  --teal-dim: rgba(45, 212, 191, 0.12);
-  --surface: #111118;
-  --surface-2: #18181f;
-  --surface-3: #1e1e28;
-  --border: #27272a;
-  --border-light: #3f3f46;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
+  --lake: #004455;
+  --lake-light: #0a5e72;
+  --teal: #46b2b8;
+  --teal-soft: rgba(70, 178, 184, 0.12);
+  --teal-glow: rgba(70, 178, 184, 0.08);
+  --gold: #e8bb25;
+  --gold-soft: rgba(232, 187, 37, 0.15);
+  --cream: #F5F0E8;
+  --cream-dark: #ebe4d8;
+  --white: #ffffff;
+  --surface: #ffffff;
+  --surface-warm: #faf8f4;
+  --surface-teal: #e8f4f5;
+  --border: #ddd5c8;
+  --border-light: #e8e2d6;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5a5a;
+  --text-tertiary: #8a8578;
   --radius: 12px;
   --radius-sm: 8px;
   --radius-lg: 16px;
   --max-w: 1200px;
+  --font-display: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
@@ -50,17 +56,18 @@ img { max-width: 100%; }
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 14px; border-radius: 100px;
   font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-  background: var(--surface-3); border: 1px solid var(--border); color: var(--text-secondary);
+  background: var(--surface-warm); border: 1px solid var(--border); color: var(--text-secondary);
 }
-.badge--accent { background: var(--accent-glow); border-color: rgba(124,92,252,0.3); color: var(--accent-light); }
-.badge--teal { background: var(--teal-dim); border-color: rgba(45,212,191,0.25); color: var(--teal); }
+.badge--teal { background: var(--teal-soft); border-color: rgba(70,178,184,0.3); color: var(--lake); }
+.badge--gold { background: var(--gold-soft); border-color: rgba(232,187,37,0.3); color: #8a6d00; }
 .section-label {
   font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--accent-light); margin-bottom: 16px;
+  color: var(--teal); margin-bottom: 16px;
 }
 .section-title {
-  font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.15;
-  color: var(--text-primary); margin-bottom: 20px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px); font-weight: 600; line-height: 1.15;
+  color: var(--lake); margin-bottom: 20px;
 }
 .section-desc {
   font-size: 17px; color: var(--text-secondary); max-width: 640px; line-height: 1.7;
@@ -74,8 +81,8 @@ img { max-width: 100%; }
 /* ========== NAV ========== */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-light);
   transition: background 0.3s;
 }
 nav .container {
@@ -84,7 +91,7 @@ nav .container {
 }
 .nav-logo {
   display: flex; align-items: center; gap: 10px;
-  font-weight: 700; font-size: 15px; color: var(--text-primary);
+  font-weight: 700; font-size: 15px; color: var(--lake);
 }
 .nav-logo svg { width: 28px; height: 28px; }
 .nav-logo span.dim { color: var(--text-tertiary); font-weight: 400; }
@@ -93,50 +100,56 @@ nav .container {
   font-size: 14px; font-weight: 500; color: var(--text-secondary);
   transition: color 0.2s;
 }
-.nav-links a:hover { color: var(--text-primary); }
+.nav-links a:hover { color: var(--lake); }
 .nav-cta {
   padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
-  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  background: var(--lake); color: #fff; border: none; cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
 }
 .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
 
 /* Mobile nav */
-.nav-toggle { display: none; background: none; border: none; color: var(--text-primary); cursor: pointer; }
+.nav-toggle { display: none; background: none; border: none; color: var(--lake); cursor: pointer; }
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .nav-toggle { display: block; }
   .nav-links.open {
     display: flex; flex-direction: column; gap: 0;
     position: absolute; top: 64px; left: 0; right: 0;
-    background: var(--surface); border-bottom: 1px solid var(--border);
+    background: var(--white); border-bottom: 1px solid var(--border);
   }
   .nav-links.open a, .nav-links.open .nav-cta {
-    padding: 16px 24px; border-bottom: 1px solid var(--border); width: 100%; text-align: left; border-radius: 0;
+    padding: 16px 24px; border-bottom: 1px solid var(--border-light); width: 100%; text-align: left; border-radius: 0;
   }
 }
 
 /* ========== HERO ========== */
 .hero {
   padding: 160px 0 100px; position: relative; overflow: hidden;
+  background: var(--white);
 }
 .hero::before {
-  content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  content: ''; position: absolute; top: -300px; right: -200px;
   width: 800px; height: 800px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(70,178,184,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -200px; left: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,187,37,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero .container { position: relative; z-index: 1; }
 .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
 .hero-content { max-width: 560px; }
 .hero h1 {
-  font-size: clamp(36px, 5vw, 54px); font-weight: 700; line-height: 1.1;
-  color: var(--text-primary); margin-bottom: 24px;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 52px); font-weight: 600; line-height: 1.12;
+  color: var(--lake); margin-bottom: 24px;
 }
-.hero h1 .gradient {
-  background: linear-gradient(135deg, var(--accent-light), var(--teal));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+.hero h1 .highlight {
+  color: var(--teal);
 }
 .hero p {
   font-size: 18px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px;
@@ -146,49 +159,49 @@ nav .container {
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
-  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  background: var(--lake); color: #fff; border: none; cursor: pointer;
   transition: all 0.2s;
 }
-.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,92,252,0.3); }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,68,85,0.2); }
 .btn-secondary {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
-  background: transparent; color: var(--text-primary); border: 1px solid var(--border-light);
+  background: transparent; color: var(--lake); border: 1px solid var(--border);
   cursor: pointer; transition: all 0.2s;
 }
-.btn-secondary:hover { border-color: var(--text-tertiary); background: var(--surface-2); }
+.btn-secondary:hover { border-color: var(--teal); background: var(--surface-teal); }
 
 /* Code window */
 .hero-code {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+  background: var(--lake); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: 0 24px 80px rgba(0,68,85,0.15);
 }
 .code-bar {
   display: flex; align-items: center; gap: 8px; padding: 14px 18px;
-  border-bottom: 1px solid var(--border); background: var(--surface-2);
+  border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.15);
 }
 .code-dot { width: 10px; height: 10px; border-radius: 50%; }
 .code-dot--r { background: #ef4444; }
 .code-dot--y { background: #eab308; }
 .code-dot--g { background: #22c55e; }
 .code-bar span {
-  margin-left: 8px; font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono);
+  margin-left: 8px; font-size: 12px; color: rgba(255,255,255,0.5); font-family: var(--font-mono);
 }
 .code-body {
   padding: 20px; font-family: var(--font-mono); font-size: 13px; line-height: 1.8;
-  overflow-x: auto;
+  overflow-x: auto; color: #e0e0e0;
 }
-.code-body .kw { color: #c084fc; }
-.code-body .fn { color: #60a5fa; }
-.code-body .str { color: #4ade80; }
-.code-body .cm { color: #52525b; font-style: italic; }
-.code-body .op { color: #a78bfa; }
-.code-body .num { color: #f59e0b; }
-.code-body .tag { color: #f472b6; }
-.code-body .attr { color: #38bdf8; }
-.code-body .val { color: #4ade80; }
-.code-body .br { color: #71717a; }
-.code-body .typ { color: #2dd4bf; }
+.code-body .kw { color: #7dd3fc; }
+.code-body .fn { color: #93c5fd; }
+.code-body .str { color: #86efac; }
+.code-body .cm { color: rgba(255,255,255,0.35); font-style: italic; }
+.code-body .op { color: #c4b5fd; }
+.code-body .num { color: #fcd34d; }
+.code-body .tag { color: #f9a8d4; }
+.code-body .attr { color: #7dd3fc; }
+.code-body .val { color: #86efac; }
+.code-body .br { color: rgba(255,255,255,0.5); }
+.code-body .typ { color: #5eead4; }
 .code-line {
   opacity: 0; transform: translateX(-8px);
   animation: typeIn 0.4s ease forwards;
@@ -203,71 +216,81 @@ nav .container {
 }
 
 /* ========== PROBLEM ========== */
-.problem { padding: 100px 0; border-top: 1px solid var(--border); }
+.problem {
+  padding: 100px 0;
+  background: var(--cream);
+}
 .problem-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;
   margin-top: 48px;
 }
 .problem-card {
-  padding: 32px; border-radius: var(--radius); background: var(--surface);
-  border: 1px solid var(--border); transition: border-color 0.3s;
+  padding: 32px; border-radius: var(--radius); background: var(--white);
+  border: 1px solid var(--border-light); transition: border-color 0.3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
-.problem-card:hover { border-color: var(--border-light); }
+.problem-card:hover { border-color: var(--teal); }
 .problem-card .icon {
   width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 20px; margin-bottom: 20px;
+  background: rgba(0,68,85,0.08); color: var(--lake); font-size: 20px; margin-bottom: 20px;
 }
 .problem-card h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
 .problem-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
 
 /* ========== SOLUTION ========== */
-.solution { padding: 100px 0; border-top: 1px solid var(--border); }
+.solution {
+  padding: 100px 0;
+  background: var(--white);
+}
 .solution-highlight {
   display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 48px;
 }
 .solution-visual {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--surface-teal); border: 1px solid rgba(70,178,184,0.2); border-radius: var(--radius-lg);
   padding: 40px; position: relative; overflow: hidden;
 }
 .solution-visual::after {
   content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
-  background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(70,178,184,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 .flow-step {
   display: flex; align-items: center; gap: 16px; padding: 16px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(70,178,184,0.15);
 }
 .flow-step:last-child { border-bottom: none; }
 .flow-num {
   width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700; font-family: var(--font-mono); flex-shrink: 0;
-  background: var(--accent-glow); color: var(--accent-light); border: 1px solid rgba(124,92,252,0.2);
+  background: var(--lake); color: #fff;
 }
 .flow-step-text h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 .flow-step-text p { font-size: 13px; color: var(--text-tertiary); }
 @media (max-width: 960px) { .solution-highlight { grid-template-columns: 1fr; } }
 
 /* ========== DEPLOYMENT OPTIONS ========== */
-.deploy { padding: 100px 0; border-top: 1px solid var(--border); }
+.deploy {
+  padding: 100px 0;
+  background: var(--cream);
+}
 .deploy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
 .deploy-card {
-  padding: 40px; border-radius: var(--radius-lg); background: var(--surface);
-  border: 1px solid var(--border); position: relative; overflow: hidden;
-  transition: border-color 0.3s;
+  padding: 40px; border-radius: var(--radius-lg); background: var(--white);
+  border: 1px solid var(--border-light); position: relative; overflow: hidden;
+  transition: border-color 0.3s; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
-.deploy-card:hover { border-color: var(--accent); }
+.deploy-card:hover { border-color: var(--teal); }
 .deploy-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
 }
 .deploy-card:first-child::before {
-  background: linear-gradient(90deg, var(--accent), transparent);
+  background: linear-gradient(90deg, var(--lake), var(--teal));
 }
 .deploy-card:last-child::before {
-  background: linear-gradient(90deg, var(--teal), transparent);
+  background: linear-gradient(90deg, var(--teal), var(--gold));
 }
 .deploy-card .badge { margin-bottom: 20px; }
-.deploy-card h3 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+.deploy-card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--lake); margin-bottom: 12px; }
 .deploy-card > p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
 .deploy-card ul { list-style: none; }
 .deploy-card ul li {
@@ -276,53 +299,62 @@ nav .container {
 }
 .deploy-card ul li::before {
   content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent-light); flex-shrink: 0; margin-top: 8px;
+  background: var(--teal); flex-shrink: 0; margin-top: 8px;
 }
-.deploy-card:last-child ul li::before { background: var(--teal); }
 @media (max-width: 768px) { .deploy-grid { grid-template-columns: 1fr; } }
 
 /* ========== WHY US ========== */
-.why { padding: 100px 0; border-top: 1px solid var(--border); }
+.why {
+  padding: 100px 0;
+  background: var(--white);
+}
 .why-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px;
 }
 .why-card {
-  padding: 32px; border-radius: var(--radius); background: var(--surface);
-  border: 1px solid var(--border);
+  padding: 32px; border-radius: var(--radius); background: var(--surface-warm);
+  border: 1px solid var(--border-light);
 }
 .why-card .metric {
-  font-size: 36px; font-weight: 700; font-family: var(--font-mono);
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 700;
   margin-bottom: 8px;
 }
-.why-card:nth-child(1) .metric { color: var(--accent-light); }
+.why-card:nth-child(1) .metric { color: var(--lake); }
 .why-card:nth-child(2) .metric { color: var(--teal); }
-.why-card:nth-child(3) .metric { color: #f59e0b; }
+.why-card:nth-child(3) .metric { color: var(--gold); }
 .why-card h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
 .why-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
 
 /* ========== INTEGRATION STEPS ========== */
-.integrate { padding: 100px 0; border-top: 1px solid var(--border); }
+.integrate {
+  padding: 100px 0;
+  background: var(--cream);
+}
 .steps {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 48px;
   background: var(--border); border-radius: var(--radius-lg); overflow: hidden;
 }
 .step {
-  background: var(--surface); padding: 36px 28px; position: relative;
+  background: var(--white); padding: 36px 28px; position: relative;
 }
 .step-num {
-  font-family: var(--font-mono); font-size: 48px; font-weight: 700;
-  color: var(--surface-3); position: absolute; top: 16px; right: 20px;
+  font-family: var(--font-display); font-size: 48px; font-weight: 700;
+  color: var(--cream-dark); position: absolute; top: 16px; right: 20px;
   line-height: 1;
 }
-.step h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.step h3 { font-size: 16px; font-weight: 700; color: var(--lake); margin-bottom: 8px; }
 .step p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 @media (max-width: 768px) {
   .steps { grid-template-columns: 1fr; }
 }
 
 /* ========== CODE EXAMPLES ========== */
-.examples { padding: 100px 0; border-top: 1px solid var(--border); }
+.examples {
+  padding: 100px 0;
+  background: var(--white);
+}
 .examples-tabs {
   display: flex; gap: 4px; margin-top: 48px; margin-bottom: 0;
   border-bottom: 1px solid var(--border); padding-bottom: 0;
@@ -332,10 +364,10 @@ nav .container {
   background: transparent; color: var(--text-tertiary); border: none; cursor: pointer;
   border-bottom: 2px solid transparent; transition: all 0.2s; margin-bottom: -1px;
 }
-.tab-btn.active { color: var(--accent-light); border-bottom-color: var(--accent); background: var(--surface); }
+.tab-btn.active { color: var(--lake); border-bottom-color: var(--teal); background: var(--surface-warm); }
 .tab-btn:hover:not(.active) { color: var(--text-secondary); }
 .tab-panel {
-  display: none; background: var(--surface); border: 1px solid var(--border);
+  display: none; background: var(--lake); border: 1px solid rgba(0,68,85,0.3);
   border-top: none; border-radius: 0 0 var(--radius) var(--radius);
   overflow: hidden;
 }
@@ -344,30 +376,37 @@ nav .container {
 
 /* ========== CTA ========== */
 .cta-section {
-  padding: 100px 0; border-top: 1px solid var(--border);
-  background: linear-gradient(180deg, var(--surface) 0%, rgba(124,92,252,0.04) 100%);
+  padding: 100px 0;
+  background: var(--lake);
   text-align: center;
 }
-.cta-section .section-title { max-width: 600px; margin: 0 auto 16px; }
-.cta-section .section-desc { margin: 0 auto 40px; text-align: center; }
+.cta-section .section-label { color: var(--teal); }
+.cta-section .section-title { color: #fff; max-width: 600px; margin: 0 auto 16px; }
+.cta-section .section-desc { margin: 0 auto 40px; text-align: center; color: rgba(255,255,255,0.7); }
 .cta-form {
   display: flex; gap: 12px; max-width: 480px; margin: 0 auto;
 }
 .cta-form input {
   flex: 1; padding: 14px 18px; border-radius: 10px; font-size: 15px;
-  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-primary);
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;
   outline: none; transition: border-color 0.2s; font-family: 'Inter', sans-serif;
 }
-.cta-form input::placeholder { color: var(--text-tertiary); }
-.cta-form input:focus { border-color: var(--accent); }
-.cta-form button { white-space: nowrap; }
+.cta-form input::placeholder { color: rgba(255,255,255,0.5); }
+.cta-form input:focus { border-color: var(--teal); }
+.cta-form button {
+  white-space: nowrap;
+  background: var(--teal); color: var(--lake);
+}
+.cta-form button:hover { background: #5ac4ca; }
 .cta-note {
-  margin-top: 16px; font-size: 13px; color: var(--text-tertiary);
+  margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.5);
 }
 
 /* ========== FOOTER ========== */
 footer {
-  padding: 48px 0; border-top: 1px solid var(--border);
+  padding: 48px 0;
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
 }
 .footer-grid {
   display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
@@ -381,9 +420,9 @@ footer {
   display: block; padding: 4px 0; font-size: 14px; color: var(--text-secondary);
   transition: color 0.2s;
 }
-.footer-col a:hover { color: var(--text-primary); }
+.footer-col a:hover { color: var(--lake); }
 .footer-bottom {
-  margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border);
+  margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-light);
   display: flex; justify-content: space-between; align-items: center;
   font-size: 13px; color: var(--text-tertiary);
 }
@@ -392,6 +431,16 @@ footer {
 }
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== CONFIRMATION MODAL ========== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,68,85,0.6); backdrop-filter: blur(8px);
+  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.modal-box {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+  padding: 48px; max-width: 480px; width: 100%; text-align: center; position: relative;
 }
 </style>
 </head>
@@ -402,18 +451,18 @@ footer {
   <div class="container">
     <a href="#" class="nav-logo">
       <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="8" fill="#7c5cfc"/>
+        <rect width="32" height="32" rx="8" fill="#004455"/>
         <path d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="16" cy="16" r="2" fill="#fff"/>
+        <circle cx="16" cy="16" r="2" fill="#46b2b8"/>
       </svg>
       SonderMind <span class="dim">/ AI Coach SDK</span>
     </a>
     <div class="nav-links" id="navLinks">
-      <a href="#problem">Problem</a>
-      <a href="#solution">Solution</a>
-      <a href="#deploy">Deploy</a>
+      <a href="#problem">Why</a>
+      <a href="#solution">How It Works</a>
+      <a href="#deploy">Integrate</a>
       <a href="#examples">Code</a>
-      <a href="#cta" class="nav-cta">Request Early Access</a>
+      <a href="#cta" class="nav-cta">Get Early Access</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -427,19 +476,18 @@ footer {
     <div class="hero-grid">
       <div class="hero-content fade-in">
         <div class="hero-badges">
-          <span class="badge badge--accent">Now in Early Access</span>
+          <span class="badge badge--teal">Now in Early Access</span>
         </div>
-        <h1>Add AI mental health coaching to your app <span class="gradient">in days, not months</span></h1>
-        <p>A single SDK integration gives your users an AI coach trained on millions of real therapy sessions. Clinically guardrailed. Validated stress and resilience assessments built in. HIPAA compliant out of the box.</p>
+        <h1>Your users need mental health support. <span class="highlight">Now they can get it inside your app.</span></h1>
+        <p>Users who feel supported stay longer, engage deeper, and recommend your app to others. The SonderMind AI Coach SDK adds real, clinically-backed stress coaching to your product in days, with zero clinical overhead on your team.</p>
         <div class="hero-badges" style="margin-bottom:24px">
           <span class="badge badge--teal">HIPAA Compliant</span>
           <span class="badge badge--teal">SOC 2 Certified</span>
           <span class="badge">BAA Available</span>
-          <span class="badge">Clinically Guardrailed</span>
         </div>
         <div class="hero-actions">
-          <a href="#cta" class="btn-primary">Request Early Access <span>&rarr;</span></a>
-          <a href="#examples" class="btn-secondary">View Code Examples</a>
+          <a href="#cta" class="btn-primary">Get Early Access <span>&rarr;</span></a>
+          <a href="#examples" class="btn-secondary">See the Code</a>
         </div>
       </div>
       <div class="hero-code fade-in" style="transition-delay: 0.15s">
@@ -459,38 +507,38 @@ footer {
 <section class="problem" id="problem">
   <div class="container">
     <div class="fade-in">
-      <p class="section-label">The Problem</p>
-      <h2 class="section-title">Your users carry stress. Your app can't help.</h2>
-      <p class="section-desc">Not everyone needs therapy, but everyone carries stress. Building a clinically-informed AI coach yourself means navigating compliance, clinical validation, and months of specialized development.</p>
+      <p class="section-label">The Reality</p>
+      <h2 class="section-title">Stress is costing you users. You just can't see it yet.</h2>
+      <p class="section-desc">Your users are dealing with anxiety, burnout, and life stress every day. When your app can't help them through those moments, they disengage, churn, or worse. And building clinical-grade support yourself is not a side project.</p>
     </div>
     <div class="problem-grid">
       <div class="problem-card fade-in">
         <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
-        <h3>No Clinical Guardrails</h3>
-        <p>Generic wellness chatbots are not clinical care. Without validated assessments and safety protocols, you risk giving users bad advice when it matters most.</p>
+        <h3>Users Disengage When They're Struggling</h3>
+        <p>Stressed users stop showing up. Without a way to support them through hard moments, your engagement drops and you never know why.</p>
       </div>
       <div class="problem-card fade-in" style="transition-delay:0.1s">
         <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
-        <h3>Months to Build</h3>
-        <p>A clinically-informed AI coach requires HIPAA infrastructure, training data from real clinical sessions, validated assessments, and safety protocols. That's 6-12 months of specialized work.</p>
+        <h3>One Bad Interaction Is a Liability</h3>
+        <p>Generic chatbots aren't built for someone in crisis. Without clinical guardrails, you risk real harm and real exposure. Your legal and compliance teams will want to know.</p>
       </div>
       <div class="problem-card fade-in" style="transition-delay:0.2s">
         <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
-        <h3>Compliance Burden</h3>
-        <p>HIPAA, SOC 2, BAAs, state licensing requirements, crisis protocols. The regulatory overhead alone can stall a product roadmap for quarters.</p>
+        <h3>Building It Yourself Takes a Year</h3>
+        <p>HIPAA infrastructure, clinical training data, validated assessments, safety protocols, compliance certification. That's 6-12 months before your first user sees value.</p>
       </div>
       <div class="problem-card fade-in" style="transition-delay:0.3s">
         <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <h3>No Clinical Foundation</h3>
-        <p>Generic AI chatbots aren't trained on real clinical data. Without validated protocols and safety guardrails, you're guessing at what works.</p>
+        <h3>Wellness Features Don't Move the Needle</h3>
+        <p>Mood trackers and breathing exercises feel good in a pitch deck, but they don't drive outcomes. Your users deserve something that actually works.</p>
       </div>
     </div>
   </div>
@@ -500,34 +548,34 @@ footer {
 <section class="solution" id="solution">
   <div class="container">
     <div class="fade-in">
-      <p class="section-label">The Solution</p>
-      <h2 class="section-title">One integration. Clinical-grade AI coaching.</h2>
-      <p class="section-desc">The SonderMind AI Coach SDK gives your app a clinically-guardrailed AI coach trained on millions of real therapy sessions. It measures stress, builds resilience, and adapts to your users' needs with neuroscience-validated assessments built in.</p>
+      <p class="section-label">What Changes</p>
+      <h2 class="section-title">Give your users a coach that's trained on real therapy sessions</h2>
+      <p class="section-desc">The SonderMind AI Coach SDK is built on 5 million+ clinical sessions and validated neuroscience assessments. Your users get real support. You get measurable outcomes and zero compliance headaches.</p>
     </div>
     <div class="solution-highlight">
       <div class="fade-in">
         <div style="margin-top:40px">
-          <h3 style="font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:16px">What your users get</h3>
+          <h3 style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--lake);margin-bottom:20px">What this means for your business</h3>
           <ul style="list-style:none">
-            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+            <li style="padding:12px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
               <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
-              <span><strong style="color:var(--text-primary)">AI coaching trained on real therapy sessions</strong> with therapist-in-the-loop oversight</span>
+              <span><strong style="color:var(--text-primary)">Users who stay longer</strong> -- people who feel supported through hard moments keep coming back. 40% annual engagement vs 3-5% for traditional EAP.</span>
             </li>
-            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+            <li style="padding:12px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
               <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
-              <span><strong style="color:var(--text-primary)">12-dimension stress and resilience assessment</strong> via Total Brain neuroscience platform</span>
+              <span><strong style="color:var(--text-primary)">Outcomes you can measure</strong> -- 25% stress reduction across clinically validated assessments. Real data, not self-reported surveys.</span>
             </li>
-            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+            <li style="padding:12px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
               <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
-              <span><strong style="color:var(--text-primary)">Clinical safety guardrails</strong> built in, with escalation protocols for high-risk situations</span>
+              <span><strong style="color:var(--text-primary)">No liability on your shoulders</strong> -- clinical guardrails, crisis protocols, and escalation pathways are built in. HIPAA and SOC 2 from day one.</span>
             </li>
-            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+            <li style="padding:12px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
               <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
-              <span><strong style="color:var(--text-primary)">Measurable outcomes</strong> with assess-train-reassess model and population-level insights</span>
+              <span><strong style="color:var(--text-primary)">A premium tier that sells itself</strong> -- mental health coaching is the feature that differentiates your app and justifies higher-tier pricing.</span>
             </li>
-            <li style="padding:10px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
+            <li style="padding:12px 0;font-size:15px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px">
               <span style="color:var(--teal);font-size:18px;line-height:1.4">&#10003;</span>
-              <span><strong style="color:var(--text-primary)">Context-aware sessions</strong> that adapt to your app's domain and user signals</span>
+              <span><strong style="color:var(--text-primary)">Live in days, not quarters</strong> -- one SDK integration. Your engineering team ships it alongside their current sprint.</span>
             </li>
           </ul>
         </div>
@@ -536,36 +584,36 @@ footer {
         <div class="flow-step">
           <div class="flow-num">1</div>
           <div class="flow-step-text">
-            <h4>SDK Integrated</h4>
-            <p>Your app triggers a coaching session</p>
+            <h4>Your app triggers a coaching moment</h4>
+            <p>High stress detected, check-in due, or user requests support</p>
           </div>
         </div>
         <div class="flow-step">
           <div class="flow-num">2</div>
           <div class="flow-step-text">
-            <h4>Baseline Assessment</h4>
-            <p>12-dimension stress and resilience score via Total Brain</p>
+            <h4>Coach assesses where they are</h4>
+            <p>Validated stress and resilience baseline, personalized to context</p>
           </div>
         </div>
         <div class="flow-step">
           <div class="flow-num">3</div>
           <div class="flow-step-text">
-            <h4>AI Coach Engages</h4>
-            <p>Clinically-guardrailed coaching adapts to your user's context</p>
+            <h4>Real coaching, not a chatbot</h4>
+            <p>Techniques drawn from millions of real therapy sessions</p>
           </div>
         </div>
         <div class="flow-step">
           <div class="flow-num">4</div>
           <div class="flow-step-text">
-            <h4>Train and Reassess</h4>
-            <p>Measurable improvement over time with ongoing assessment</p>
+            <h4>Progress your users can feel</h4>
+            <p>Measurable improvement over time with ongoing reassessment</p>
           </div>
         </div>
         <div class="flow-step">
           <div class="flow-num">5</div>
           <div class="flow-step-text">
-            <h4>Safety Guardrails</h4>
-            <p>Built-in escalation protocols if clinical need is detected</p>
+            <h4>Safety net always on</h4>
+            <p>Clinical escalation protocols activate automatically if needed</p>
           </div>
         </div>
       </div>
@@ -577,33 +625,33 @@ footer {
 <section class="deploy" id="deploy">
   <div class="container">
     <div class="fade-in">
-      <p class="section-label">Deployment Options</p>
-      <h2 class="section-title">Two ways to integrate. Pick what fits.</h2>
-      <p class="section-desc">Whether your app already has an AI assistant or you're starting fresh, there's a clean path to integration.</p>
+      <p class="section-label">Integration</p>
+      <h2 class="section-title">Two paths. Both ship fast.</h2>
+      <p class="section-desc">Whether your app already has an AI layer or you need a turnkey solution, there's a clean integration path.</p>
     </div>
     <div class="deploy-grid">
       <div class="deploy-card fade-in">
-        <span class="badge badge--accent">For apps with AI</span>
+        <span class="badge badge--teal">Your app has AI</span>
         <h3>Tool / Function Calling</h3>
-        <p>Your AI assistant calls our coaching API as a tool. The SonderMind coach runs as a function within your existing conversational flow.</p>
+        <p>Your AI assistant calls our coach as a tool. The SonderMind coach runs as a function within your existing conversational flow, passing context both ways.</p>
         <ul>
           <li>Works with OpenAI, Anthropic, or custom LLM stacks</li>
           <li>Coach runs as a tool call within your agent</li>
           <li>Full context passing between your AI and ours</li>
           <li>REST API + WebSocket for real-time sessions</li>
-          <li>Assessment scores and coaching insights as structured data</li>
+          <li>Structured data back: stress scores, session summaries, follow-up timing</li>
         </ul>
       </div>
       <div class="deploy-card fade-in" style="transition-delay:0.1s">
-        <span class="badge badge--teal">For apps without AI</span>
+        <span class="badge badge--gold">Your app needs a UI</span>
         <h3>Embeddable SDK</h3>
-        <p>Drop in a pre-built coaching interface with a few lines of code. Full UI included, fully themeable to match your brand.</p>
+        <p>Drop in a pre-built coaching experience with a few lines of code. Complete UI included, fully themeable to match your brand.</p>
         <ul>
           <li>React Native and Web components</li>
-          <li>Themeable UI that matches your brand</li>
+          <li>Fully themeable to match your brand</li>
           <li>Handles all coaching UX out of the box</li>
-          <li>Event callbacks for assessment scores and session state</li>
-          <li>Works on iOS, Android, and web</li>
+          <li>Event callbacks for scores and session state</li>
+          <li>iOS, Android, and web</li>
         </ul>
       </div>
     </div>
@@ -615,23 +663,23 @@ footer {
   <div class="container">
     <div class="fade-in">
       <p class="section-label">Why SonderMind</p>
-      <h2 class="section-title">Clinical infrastructure you can't build alone</h2>
+      <h2 class="section-title">This isn't another wellness API</h2>
     </div>
     <div class="why-grid">
       <div class="why-card fade-in">
         <div class="metric">25%</div>
-        <h3>Stress Reduction</h3>
-        <p>Measured across assess-train-reassess cognitive programs. Real outcomes data, not self-reported surveys.</p>
+        <h3>Stress Reduction, Measured</h3>
+        <p>Not self-reported. Clinically validated assessments show 25% reduction in stress across the user base. Your users feel it, and you can prove it.</p>
       </div>
       <div class="why-card fade-in" style="transition-delay:0.1s">
-        <div class="metric">Days</div>
-        <h3>To Integration</h3>
-        <p>Working prototype in under two hours. Production deployment in days. No compliance buildout, no clinical hiring, no regulatory review.</p>
+        <div class="metric">40%</div>
+        <h3>Annual Engagement Rate</h3>
+        <p>Compared to 3-5% for traditional EAP programs. Users come back because the coaching actually helps them manage real-life stress.</p>
       </div>
       <div class="why-card fade-in" style="transition-delay:0.2s">
-        <div class="metric">12</div>
-        <h3>Brain Health Dimensions</h3>
-        <p>Total Brain neuroscience assessments measure stress, resilience, focus, planning, and more. Population-level insights your users and your team can act on.</p>
+        <div class="metric">5M+</div>
+        <h3>Clinical Sessions Behind the Model</h3>
+        <p>Trained on real therapy sessions from SonderMind's provider network. This is clinical intelligence, not a general-purpose LLM with a wellness wrapper.</p>
       </div>
     </div>
   </div>
@@ -642,28 +690,28 @@ footer {
   <div class="container">
     <div class="fade-in">
       <p class="section-label">Getting Started</p>
-      <h2 class="section-title">From zero to live in four steps</h2>
+      <h2 class="section-title">Live in four steps</h2>
     </div>
     <div class="steps">
       <div class="step fade-in">
         <span class="step-num">01</span>
-        <h3>Apply</h3>
-        <p>Submit your use case. We review for clinical fit and regulatory alignment.</p>
+        <h3>Tell Us Your Use Case</h3>
+        <p>30-minute call. We learn about your users, your app, and what outcomes matter to you.</p>
       </div>
       <div class="step fade-in" style="transition-delay:0.1s">
         <span class="step-num">02</span>
-        <h3>Sandbox</h3>
-        <p>Get API keys and access to a full sandbox environment with test users and mock escalations.</p>
+        <h3>Get Sandbox Access</h3>
+        <p>API keys, test environment, sample integrations. Your team can prototype in hours.</p>
       </div>
       <div class="step fade-in" style="transition-delay:0.15s">
         <span class="step-num">03</span>
-        <h3>Integrate</h3>
-        <p>Build with our SDK or API. Ship a working prototype in hours with our quickstart guides.</p>
+        <h3>Build and Test</h3>
+        <p>Use our SDK or API. We pair with your engineering team to get the integration right.</p>
       </div>
       <div class="step fade-in" style="transition-delay:0.2s">
         <span class="step-num">04</span>
-        <h3>Launch</h3>
-        <p>Go live with clinical coaching, escalation pathways, and full compliance coverage from day one.</p>
+        <h3>Launch With Confidence</h3>
+        <p>Go live with clinical coaching, compliance coverage, and outcomes tracking from day one.</p>
       </div>
     </div>
   </div>
@@ -673,9 +721,9 @@ footer {
 <section class="examples" id="examples">
   <div class="container">
     <div class="fade-in">
-      <p class="section-label">Code Examples</p>
-      <h2 class="section-title">Built for developers who ship</h2>
-      <p class="section-desc">Real code. Real patterns. Pick the integration style that matches your architecture.</p>
+      <p class="section-label">For Your Engineering Team</p>
+      <h2 class="section-title">Clean APIs. Real code. Ship this week.</h2>
+      <p class="section-desc">Four integration patterns. Pick what fits your architecture.</p>
     </div>
     <div class="fade-in" style="transition-delay:0.1s">
       <div class="examples-tabs">
@@ -732,11 +780,10 @@ footer {
     <span class="tag">&lt;CoachingView</span>
       <span class="attr">apiKey</span>=<span class="br">{</span>process.env.<span class="val">SONDERMIND_API_KEY</span><span class="br">}</span>
       <span class="attr">userId</span>=<span class="br">{</span>currentUser.<span class="val">id</span><span class="br">}</span>
-      <span class="attr">theme</span>=<span class="str">"dark"</span>
-      <span class="attr">brandColor</span>=<span class="str">"#7c5cfc"</span>
+      <span class="attr">theme</span>=<span class="str">"light"</span>
+      <span class="attr">brandColor</span>=<span class="str">"#46b2b8"</span>
       <span class="attr">onAssessment</span>=<span class="br">{</span>(<span class="val">scores</span>) <span class="op">=&gt;</span> {
         <span class="cm">// scores.stress: 72, scores.resilience: 58, scores.focus: 81</span>
-        <span class="cm">// scores.dimensions: 12 Total Brain cognitive dimensions</span>
         <span class="fn">updateUserProfile</span>(scores);
       <span class="br">}</span>}
       <span class="attr">onSessionEnd</span>=<span class="br">{</span>(<span class="val">summary</span>) <span class="op">=&gt;</span> {
@@ -829,13 +876,13 @@ session.<span class="fn">send</span>(<span class="str">"I have been struggling t
   <div class="container">
     <div class="fade-in">
       <p class="section-label">Early Access</p>
-      <h2 class="section-title">Ship an AI coach, not compliance paperwork</h2>
+      <h2 class="section-title">Give your users the support they're looking for</h2>
       <p class="section-desc">We're onboarding a small number of design partners for the first SDK cohort. Drop your email and we'll reach out within 24 hours.</p>
       <form class="cta-form" onsubmit="handleSubmit(event)">
         <input type="email" placeholder="you@company.com" required aria-label="Email address">
-        <button type="submit" class="btn-primary">Request Early Access</button>
+        <button type="submit" class="btn-primary">Get Early Access</button>
       </form>
-      <p class="cta-note">No commitment. We'll schedule a 30-minute walkthrough to see if it's a fit.</p>
+      <p class="cta-note">No commitment. 30-minute walkthrough to see if it's a fit.</p>
     </div>
   </div>
 </section>
@@ -847,9 +894,9 @@ session.<span class="fn">send</span>(<span class="str">"I have been struggling t
       <div class="footer-brand">
         <a href="#" class="nav-logo" style="margin-bottom:4px">
           <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
-            <rect width="32" height="32" rx="8" fill="#7c5cfc"/>
+            <rect width="32" height="32" rx="8" fill="#004455"/>
             <path d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="16" cy="16" r="2" fill="#fff"/>
+            <circle cx="16" cy="16" r="2" fill="#46b2b8"/>
           </svg>
           SonderMind <span class="dim">/ AI Coach SDK</span>
         </a>
@@ -857,8 +904,8 @@ session.<span class="fn">send</span>(<span class="str">"I have been struggling t
       </div>
       <div class="footer-col">
         <h4>Product</h4>
-        <a href="#solution">Overview</a>
-        <a href="#deploy">Deployment</a>
+        <a href="#solution">How It Works</a>
+        <a href="#deploy">Integration</a>
         <a href="#examples">Code Examples</a>
         <a href="#">Changelog</a>
       </div>
@@ -971,17 +1018,17 @@ function handleSubmit(e) {
 
 function showConfirmation(email) {
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;';
+  overlay.className = 'modal-overlay';
   const modal = document.createElement('div');
-  modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px;max-width:480px;width:100%;text-align:center;position:relative;';
+  modal.className = 'modal-box';
   modal.innerHTML = `
-    <div style="width:56px;height:56px;border-radius:50%;background:rgba(45,212,191,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    <div style="width:56px;height:56px;border-radius:50%;background:rgba(70,178,184,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#46b2b8" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <h3 style="font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:12px;">You're on the list</h3>
-    <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;">We'll reach out to <strong style="color:var(--text-primary)">${email}</strong> within 24 hours. Want to skip the wait and book a 30-minute walkthrough now?</p>
-    <a href="${CALENDLY_URL !== 'https://calendar.app.google/E7Hr6VA3izdpqfDb8' ? CALENDLY_URL : '#'}" target="_blank" class="btn-primary" style="display:inline-flex;text-decoration:none;margin-bottom:12px;">Book a 30-min Walkthrough <span>&rarr;</span></a>
-    <p style="margin-top:16px;"><button onclick="this.closest('div[style]').parentElement.remove()" style="background:none;border:none;color:var(--text-tertiary);font-size:14px;cursor:pointer;">I'll wait for the email</button></p>
+    <h3 style="font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--lake);margin-bottom:12px;">You're on the list</h3>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;">We'll reach out to <strong style="color:var(--text-primary)">${email}</strong> within 24 hours. Want to skip the wait?</p>
+    <a href="${CALENDLY_URL}" target="_blank" class="btn-primary" style="display:inline-flex;text-decoration:none;margin-bottom:12px;">Book a 30-min Walkthrough <span>&rarr;</span></a>
+    <p style="margin-top:16px;"><button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;color:var(--text-tertiary);font-size:14px;cursor:pointer;">I'll wait for the email</button></p>
   `;
   overlay.appendChild(modal);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
